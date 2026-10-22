@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-center
+          uri: lb://user-center
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+        - id: order-work
+          uri: lb://order-work
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=2
+        - id: health-record
+          uri: lb://health-record
+          predicates:
+            - Path=/api/health/**
+          filters:
+            - StripPrefix=2
+        - id: notify
+          uri: lb://notify
+          predicates:
+            - Path=/api/notify/**
+          filters:
+            - StripPrefix=2
+        - id: statistics
+          uri: lb://statistics
+          predicates:
+            - Path=/api/statistics/**
+          filters:
+            - StripPrefix=2
+  data:
+    redis:
+      host: 192.168.11.133
+      port: 6379
+      password: "123456"
+
+# JWT 配置（与 common-security 的 JwtUtil 对应）
+jwt:
+  secret: eldercare-community-2026-secret-key-please-change
+  expire-seconds: 7200
