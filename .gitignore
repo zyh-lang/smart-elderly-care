@@ -1,0 +1,30 @@
+# Maven
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.m2/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node / 前端
+node_modules/
+dist/
+*.log
+npm-debug.log*
+
+# 微信小程序
+miniprogram_npm/
+
+# 本地配置
+*.local
