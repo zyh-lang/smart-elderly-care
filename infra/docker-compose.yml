@@ -1,0 +1,42 @@
+# 社区智慧养老服务系统 - 基础设施编排（Nacos / MySQL / Redis）
+# 部署目标：VMware + CentOS 7 虚拟机，桥接 IP 192.168.11.133
+# 启动：docker compose up -d
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: elderly-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      TZ: "Asia/Shanghai"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7
+    container_name: elderly-redis
+    restart: always
+    command: ["redis-server", "--requirepass", "123456", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+
+  # Nacos 2.x 除 8848 外还需 gRPC 端口 9848/9849；采用 host 网络，
+  # 让 Nacos 直接绑定虚拟机 IP，避免 Docker NAT 导致 gRPC 注册失败。
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: elderly-nacos
+    restart: always
+    network_mode: host
+    environment:
+      - MODE=standalone
+      - NACOS_SERVER_IP=192.168.11.133
+    volumes:
+      - ./nacos/logs:/home/nacos/logs
