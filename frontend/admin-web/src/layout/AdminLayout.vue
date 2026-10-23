@@ -9,14 +9,20 @@
         text-color="rgba(255,255,255,0.75)"
         active-text-color="#409EFF"
       >
-        <el-menu-item index="/dashboard"><el-icon><DataLine /></el-icon><span>数据看板</span></el-menu-item>
-        <el-menu-item index="/user"><el-icon><User /></el-icon><span>用户管理</span></el-menu-item>
-        <el-menu-item index="/elder"><el-icon><Avatar /></el-icon><span>老人管理</span></el-menu-item>
-        <el-menu-item index="/service"><el-icon><Goods /></el-icon><span>服务管理</span></el-menu-item>
-        <el-menu-item index="/order"><el-icon><List /></el-icon><span>订单管理</span></el-menu-item>
-        <el-menu-item index="/work-order"><el-icon><Tickets /></el-icon><span>工单管理</span></el-menu-item>
-        <el-menu-item index="/health"><el-icon><FirstAidKit /></el-icon><span>健康档案</span></el-menu-item>
-        <el-menu-item index="/message"><el-icon><Bell /></el-icon><span>消息中心</span></el-menu-item>
+        <template v-if="isProvider">
+          <el-menu-item index="/provider-workbench"><el-icon><Tickets /></el-icon><span>服务商工作台</span></el-menu-item>
+          <el-menu-item index="/message"><el-icon><Bell /></el-icon><span>消息中心</span></el-menu-item>
+        </template>
+        <template v-else>
+          <el-menu-item index="/dashboard"><el-icon><DataLine /></el-icon><span>数据看板</span></el-menu-item>
+          <el-menu-item index="/user"><el-icon><User /></el-icon><span>用户管理</span></el-menu-item>
+          <el-menu-item index="/elder"><el-icon><Avatar /></el-icon><span>老人管理</span></el-menu-item>
+          <el-menu-item index="/service"><el-icon><Goods /></el-icon><span>服务管理</span></el-menu-item>
+          <el-menu-item index="/order"><el-icon><List /></el-icon><span>订单管理</span></el-menu-item>
+          <el-menu-item index="/work-order"><el-icon><Tickets /></el-icon><span>工单管理</span></el-menu-item>
+          <el-menu-item index="/health"><el-icon><FirstAidKit /></el-icon><span>健康档案</span></el-menu-item>
+          <el-menu-item index="/message"><el-icon><Bell /></el-icon><span>消息中心</span></el-menu-item>
+        </template>
       </el-menu>
     </el-aside>
     <el-container>
@@ -36,14 +42,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { logout } from '../api/auth'
 
 const router = useRouter()
-const username = ref(localStorage.getItem('username') || '管理员')
+const username = ref(localStorage.getItem('username') || '用户')
 const role = ref(localStorage.getItem('role') || 'ADMIN')
+const isProvider = computed(() => role.value === 'PROVIDER')
 
 const handleLogout = async () => {
   try {
