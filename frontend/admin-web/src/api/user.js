@@ -11,3 +11,6 @@ export const updateUserStatus = (id, status) => request.put('/user/user/status',
 
 // 当前家属绑定的老人列表
 export const getElderList = () => request.get('/user/elder/my')
+
+// 全部老人列表（管理员/工作人员，管理端健康档案用）
+export const getAllElders = () => request.get('/user/elder/list')

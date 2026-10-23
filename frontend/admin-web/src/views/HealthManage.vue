@@ -92,7 +92,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getElderList } from '../api/user'
+import { getAllElders } from '../api/user'
 import {
   getHealthRecord, saveHealthRecord, getMetrics, addMetric,
   getMedications, addMedication, deleteMedication
@@ -186,7 +186,7 @@ const removeMedication = async (row) => {
 
 onMounted(async () => {
   try {
-    elders.value = (await getElderList()).data
+    elders.value = (await getAllElders()).data
     if (elders.value.length > 0) {
       await selectElder(elders.value[0].id)
     }

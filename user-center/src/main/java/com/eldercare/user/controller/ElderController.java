@@ -2,6 +2,7 @@ package com.eldercare.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.eldercare.common.core.result.Result;
+import com.eldercare.common.web.annotation.RequireRole;
 import com.eldercare.common.web.context.UserContext;
 import com.eldercare.user.entity.Elder;
 import com.eldercare.user.entity.FamilyBinding;
@@ -40,6 +41,15 @@ public class ElderController {
         }
         List<Elder> elders = elderMapper.selectList(new LambdaQueryWrapper<Elder>()
                 .in(Elder::getId, elderIds)
+                .orderByAsc(Elder::getId));
+        return Result.success(elders);
+    }
+
+    /** 全部老人列表（管理员/工作人员，管理端健康档案用） */
+    @GetMapping("/list")
+    @RequireRole({"ADMIN", "STAFF"})
+    public Result<List<Elder>> list() {
+        List<Elder> elders = elderMapper.selectList(new LambdaQueryWrapper<Elder>()
                 .orderByAsc(Elder::getId));
         return Result.success(elders);
     }
