@@ -22,6 +22,8 @@ node_modules/
 dist/
 *.log
 npm-debug.log*
+.tmp/
+.npm-cache/
 
 # 微信小程序
 miniprogram_npm/
