@@ -13,6 +13,7 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'Dashboard', component: () => import('../views/Dashboard.vue'), meta: { title: '数据看板' } },
       { path: 'user', name: 'UserManage', component: () => import('../views/UserManage.vue'), meta: { title: '用户管理' } },
+      { path: 'elder', name: 'ElderManage', component: () => import('../views/ElderManage.vue'), meta: { title: '老人管理' } },
       { path: 'service', name: 'ServiceManage', component: () => import('../views/ServiceManage.vue'), meta: { title: '服务管理' } },
       { path: 'order', name: 'OrderManage', component: () => import('../views/OrderManage.vue'), meta: { title: '订单管理' } },
       { path: 'work-order', name: 'WorkOrderManage', component: () => import('../views/WorkOrderManage.vue'), meta: { title: '工单管理' } },

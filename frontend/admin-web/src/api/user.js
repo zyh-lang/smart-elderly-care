@@ -14,3 +14,12 @@ export const getElderList = () => request.get('/user/elder/my')
 
 // 全部老人列表（管理员/工作人员，管理端健康档案用）
 export const getAllElders = () => request.get('/user/elder/list')
+
+// 新增老人
+export const addElder = (data) => request.post('/user/elder/add', data)
+
+// 修改老人
+export const updateElder = (data) => request.put('/user/elder/update', data)
+
+// 删除老人
+export const deleteElder = (id) => request.delete(`/user/elder/${id}`)

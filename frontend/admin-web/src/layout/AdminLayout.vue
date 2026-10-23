@@ -11,6 +11,7 @@
       >
         <el-menu-item index="/dashboard"><el-icon><DataLine /></el-icon><span>数据看板</span></el-menu-item>
         <el-menu-item index="/user"><el-icon><User /></el-icon><span>用户管理</span></el-menu-item>
+        <el-menu-item index="/elder"><el-icon><Avatar /></el-icon><span>老人管理</span></el-menu-item>
         <el-menu-item index="/service"><el-icon><Goods /></el-icon><span>服务管理</span></el-menu-item>
         <el-menu-item index="/order"><el-icon><List /></el-icon><span>订单管理</span></el-menu-item>
         <el-menu-item index="/work-order"><el-icon><Tickets /></el-icon><span>工单管理</span></el-menu-item>

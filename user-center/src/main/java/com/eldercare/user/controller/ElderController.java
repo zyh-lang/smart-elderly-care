@@ -1,6 +1,8 @@
 package com.eldercare.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.eldercare.common.core.exception.BusinessException;
+import com.eldercare.common.core.exception.ErrorCode;
 import com.eldercare.common.core.result.Result;
 import com.eldercare.common.web.annotation.RequireRole;
 import com.eldercare.common.web.context.UserContext;
@@ -9,7 +11,13 @@ import com.eldercare.user.entity.FamilyBinding;
 import com.eldercare.user.mapper.ElderMapper;
 import com.eldercare.user.mapper.FamilyBindingMapper;
 import jakarta.annotation.Resource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,5 +60,35 @@ public class ElderController {
         List<Elder> elders = elderMapper.selectList(new LambdaQueryWrapper<Elder>()
                 .orderByAsc(Elder::getId));
         return Result.success(elders);
+    }
+
+    /** 新增老人（管理员/工作人员） */
+    @PostMapping("/add")
+    @RequireRole({"ADMIN", "STAFF"})
+    public Result<Long> add(@RequestBody Elder elder) {
+        if (!StringUtils.hasText(elder.getName())) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "老人姓名不能为空");
+        }
+        elder.setId(null);
+        elderMapper.insert(elder);
+        return Result.success(elder.getId());
+    }
+
+    /** 修改老人（管理员/工作人员） */
+    @PutMapping("/update")
+    @RequireRole({"ADMIN", "STAFF"})
+    public Result<Void> update(@RequestBody Elder elder) {
+        elderMapper.updateById(elder);
+        return Result.success();
+    }
+
+    /** 删除老人（管理员/工作人员，逻辑删除并清理绑定关系） */
+    @DeleteMapping("/{id}")
+    @RequireRole({"ADMIN", "STAFF"})
+    public Result<Void> delete(@PathVariable Long id) {
+        elderMapper.deleteById(id);
+        familyBindingMapper.delete(new LambdaQueryWrapper<FamilyBinding>()
+                .eq(FamilyBinding::getElderId, id));
+        return Result.success();
     }
 }
