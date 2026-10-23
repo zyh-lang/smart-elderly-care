@@ -27,6 +27,7 @@
         <module>common/common-web</module>
         <module>gateway</module>
         <module>user-center</module>
+        <module>order-work</module>
     </modules>
 
     <properties>
