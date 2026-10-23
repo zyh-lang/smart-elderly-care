@@ -71,7 +71,7 @@ public class ElderController {
         }
         elder.setId(null);
         elderMapper.insert(elder);
-        bindFamily(elder);
+        syncBinding(elder);
         return Result.success(elder.getId());
     }
 
@@ -80,23 +80,22 @@ public class ElderController {
     @RequireRole({"ADMIN", "STAFF"})
     public Result<Void> update(@RequestBody Elder elder) {
         elderMapper.updateById(elder);
-        // 重建绑定关系：先清理旧绑定，再按新家属绑定
-        familyBindingMapper.delete(new LambdaQueryWrapper<FamilyBinding>()
-                .eq(FamilyBinding::getElderId, elder.getId()));
-        bindFamily(elder);
+        syncBinding(elder);
         return Result.success();
     }
 
-    /** 按 familyUserId 建立家属-老人绑定 */
-    private void bindFamily(Elder elder) {
-        if (elder.getFamilyUserId() == null) {
-            return;
+    /**
+     * 同步家属绑定：先幂等建立（或恢复）目标绑定，再逻辑删除与其他家属的绑定。
+     * 使用 ON DUPLICATE KEY UPDATE 避免「逻辑删除行占唯一键导致重建失败」。
+     */
+    private void syncBinding(Elder elder) {
+        if (elder.getFamilyUserId() != null) {
+            String relation = StringUtils.hasText(elder.getRelation()) ? elder.getRelation() : "子女";
+            familyBindingMapper.upsertBinding(elder.getFamilyUserId(), elder.getId(), relation);
         }
-        FamilyBinding binding = new FamilyBinding();
-        binding.setFamilyUserId(elder.getFamilyUserId());
-        binding.setElderId(elder.getId());
-        binding.setRelation(StringUtils.hasText(elder.getRelation()) ? elder.getRelation() : "子女");
-        familyBindingMapper.insert(binding);
+        familyBindingMapper.delete(new LambdaQueryWrapper<FamilyBinding>()
+                .eq(FamilyBinding::getElderId, elder.getId())
+                .ne(elder.getFamilyUserId() != null, FamilyBinding::getFamilyUserId, elder.getFamilyUserId()));
     }
 
     /** 删除老人（管理员/工作人员，逻辑删除并清理绑定关系） */
