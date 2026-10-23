@@ -1,13 +1,4 @@
 server:
   port: 8085
 
-spring:
-  data:
-    redis:
-      host: 192.168.11.133
-      port: 6379
-      password: "123456"
-
-jwt:
-  secret: eldercare-community-2026-secret-key-please-change
-  expire-seconds: 7200
+# 公共配置（Redis/JWT 等）由 Nacos 共享配置 shared-datasource.yaml 提供；本服务无数据库

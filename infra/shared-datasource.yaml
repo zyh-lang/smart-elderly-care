@@ -1,0 +1,24 @@
+# 各微服务共享配置（发布到 Nacos 配置中心）
+# Data ID: shared-datasource.yaml   Group: DEFAULT_GROUP   格式: YAML
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: "123456"
+  data:
+    redis:
+      host: 192.168.11.133
+      port: 6379
+      password: "123456"
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+jwt:
+  secret: eldercare-community-2026-secret-key-please-change
+  expire-seconds: 7200

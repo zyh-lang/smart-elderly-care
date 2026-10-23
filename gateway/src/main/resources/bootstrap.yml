@@ -13,3 +13,7 @@ spring:
         server-addr: 192.168.11.133:8848
         file-extension: yaml
         group: DEFAULT_GROUP
+        shared-configs:
+          - data-id: shared-datasource.yaml
+            group: DEFAULT_GROUP
+            refresh: true
