@@ -28,6 +28,7 @@ import com.eldercare.order.mapper.EvaluationMapper;
 import com.eldercare.order.mapper.ServiceCatalogMapper;
 import com.eldercare.order.mapper.ServiceOrderMapper;
 import com.eldercare.order.mapper.WorkOrderMapper;
+import com.eldercare.order.service.NotifyService;
 import com.eldercare.order.service.OrderService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private DistributedLock distributedLock;
+
+    @Resource
+    private NotifyService notifyService;
 
     @Override
     public Long createOrder(OrderCreateDTO dto) {
@@ -189,6 +193,10 @@ public class OrderServiceImpl implements OrderService {
             update.setStatus(OrderStatus.DISPATCHED);
             serviceOrderMapper.updateById(update);
 
+            // 消息通知：通知服务商与家属
+            notifyService.send(best.getUserId(), "新工单通知", "您有新的服务工单：" + order.getServiceName());
+            notifyService.send(order.getFamilyUserId(), "订单派单成功", "您的订单已派单给：" + best.getProviderName());
+
             return workOrder;
         } finally {
             distributedLock.unlock(lockKey, lockValue);
@@ -205,6 +213,9 @@ public class OrderServiceImpl implements OrderService {
         update.setStatus(WorkOrderStatus.IN_SERVICE);
         update.setAcceptTime(LocalDateTime.now());
         workOrderMapper.updateById(update);
+        // 通知家属服务已开始
+        ServiceOrder order = serviceOrderMapper.selectById(wo.getOrderId());
+        notifyService.send(order.getFamilyUserId(), "服务已开始", "服务商已开始为您提供「" + order.getServiceName() + "」服务");
     }
 
     @Override
@@ -217,6 +228,9 @@ public class OrderServiceImpl implements OrderService {
         update.setStatus(WorkOrderStatus.WAIT_ACCEPT);
         update.setFinishTime(LocalDateTime.now());
         workOrderMapper.updateById(update);
+        // 通知家属服务完成
+        ServiceOrder order = serviceOrderMapper.selectById(wo.getOrderId());
+        notifyService.send(order.getFamilyUserId(), "服务已完成", "服务已完成，请及时验收");
     }
 
     @Override
@@ -228,6 +242,8 @@ public class OrderServiceImpl implements OrderService {
         update.setId(workOrderId);
         update.setStatus(WorkOrderStatus.COMPLETED);
         workOrderMapper.updateById(update);
+        // 通知服务商工单已验收
+        notifyService.send(wo.getProviderUserId(), "工单已验收", "您的工单已通过验收");
     }
 
     @Override
@@ -248,6 +264,8 @@ public class OrderServiceImpl implements OrderService {
         orderUpdate.setId(wo.getOrderId());
         orderUpdate.setStatus(OrderStatus.CANCELLED);
         serviceOrderMapper.updateById(orderUpdate);
+        // 通知服务商工单已取消
+        notifyService.send(wo.getProviderUserId(), "工单已取消", "您的工单已被取消");
     }
 
     @Override
@@ -268,6 +286,8 @@ public class OrderServiceImpl implements OrderService {
         update.setId(wo.getId());
         update.setStatus(WorkOrderStatus.EVALUATED);
         workOrderMapper.updateById(update);
+        // 通知服务商收到新评价
+        notifyService.send(wo.getProviderUserId(), "收到新评价", "您的服务收到了新的评价");
     }
 
     @Override
@@ -291,6 +311,8 @@ public class OrderServiceImpl implements OrderService {
         update.setId(wo.getId());
         update.setStatus(WorkOrderStatus.COMPLAINED);
         workOrderMapper.updateById(update);
+        // 通知服务商收到投诉
+        notifyService.send(wo.getProviderUserId(), "收到投诉", "您的服务收到了一条投诉");
     }
 
     /* ---------- 私有辅助 ---------- */

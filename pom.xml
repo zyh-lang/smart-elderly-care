@@ -28,6 +28,8 @@
         <module>gateway</module>
         <module>user-center</module>
         <module>order-work</module>
+        <module>health-record</module>
+        <module>notify</module>
     </modules>
 
     <properties>
