@@ -196,6 +196,8 @@ public class OrderServiceImpl implements OrderService {
             // 消息通知：通知服务商与家属
             notifyService.send(best.getUserId(), "新工单通知", "您有新的服务工单：" + order.getServiceName());
             notifyService.send(order.getFamilyUserId(), "订单派单成功", "您的订单已派单给：" + best.getProviderName());
+            // 消息通知：告知执行派单的管理员/工作人员派单结果
+            notifyService.send(UserContext.getUserId(), "派单成功", "订单已成功派单给：" + best.getProviderName());
 
             return workOrder;
         } finally {
