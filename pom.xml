@@ -30,6 +30,7 @@
         <module>order-work</module>
         <module>health-record</module>
         <module>notify</module>
+        <module>statistics</module>
     </modules>
 
     <properties>

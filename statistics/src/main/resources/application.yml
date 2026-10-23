@@ -1,0 +1,13 @@
+server:
+  port: 8085
+
+spring:
+  data:
+    redis:
+      host: 192.168.11.133
+      port: 6379
+      password: "123456"
+
+jwt:
+  secret: eldercare-community-2026-secret-key-please-change
+  expire-seconds: 7200
