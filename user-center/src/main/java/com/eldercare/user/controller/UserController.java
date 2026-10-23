@@ -46,17 +46,21 @@ public class UserController {
         return Result.success(user);
     }
 
-    /** 用户分页列表（仅管理员） */
+    /** 用户分页列表（仅管理员，可按角色过滤） */
     @GetMapping("/list")
     @RequireRole("ADMIN")
     public Result<PageResult<SysUser>> list(@RequestParam(defaultValue = "1") long current,
                                             @RequestParam(defaultValue = "10") long size,
-                                            @RequestParam(required = false) String keyword) {
+                                            @RequestParam(required = false) String keyword,
+                                            @RequestParam(required = false) String role) {
         Page<SysUser> page = new Page<>(current, size);
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(keyword)) {
             wrapper.and(w -> w.like(SysUser::getUsername, keyword)
                     .or().like(SysUser::getRealName, keyword));
+        }
+        if (StringUtils.hasText(role)) {
+            wrapper.eq(SysUser::getRole, role);
         }
         wrapper.orderByDesc(SysUser::getCreateTime);
         page = sysUserMapper.selectPage(page, wrapper);

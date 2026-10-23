@@ -38,6 +38,14 @@
         <el-form-item label="住址"><el-input v-model="form.address" /></el-form-item>
         <el-form-item label="紧急联系人"><el-input v-model="form.emergencyContact" /></el-form-item>
         <el-form-item label="紧急电话"><el-input v-model="form.emergencyPhone" /></el-form-item>
+        <el-form-item label="绑定家属">
+          <el-select v-model="form.familyUserId" clearable placeholder="选择家属账号（不选则不绑定）" style="width: 100%">
+            <el-option v-for="u in familyUsers" :key="u.id" :label="`${u.realName || u.username}（${u.username}）`" :value="u.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="与家属关系">
+          <el-input v-model="form.relation" placeholder="如：子女" />
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -50,15 +58,24 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getAllElders, addElder, updateElder, deleteElder } from '../api/user'
+import { getAllElders, addElder, updateElder, deleteElder, getUserList } from '../api/user'
 
 const list = ref([])
+const familyUsers = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
 const form = reactive({
   id: null, name: '', gender: 1, age: null, community: '',
-  phone: '', address: '', emergencyContact: '', emergencyPhone: ''
+  phone: '', address: '', emergencyContact: '', emergencyPhone: '',
+  familyUserId: null, relation: '子女'
 })
+
+const loadFamilyUsers = async () => {
+  try {
+    const res = await getUserList({ current: 1, size: 100, role: 'FAMILY' })
+    familyUsers.value = res.data.records
+  } catch (e) { /* ignore */ }
+}
 
 const load = async () => {
   loading.value = true
@@ -73,13 +90,14 @@ const load = async () => {
 const openAdd = () => {
   Object.assign(form, {
     id: null, name: '', gender: 1, age: null, community: '',
-    phone: '', address: '', emergencyContact: '', emergencyPhone: ''
+    phone: '', address: '', emergencyContact: '', emergencyPhone: '',
+    familyUserId: null, relation: '子女'
   })
   dialogVisible.value = true
 }
 
 const openEdit = (row) => {
-  Object.assign(form, { ...row })
+  Object.assign(form, { ...row, relation: '子女' })
   dialogVisible.value = true
 }
 
@@ -108,7 +126,10 @@ const handleDelete = (row) => {
     .catch(() => {})
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadFamilyUsers()
+})
 </script>
 
 <style scoped>

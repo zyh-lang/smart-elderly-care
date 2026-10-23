@@ -45,6 +45,10 @@ public class Elder implements Serializable {
     /** 绑定家属用户ID */
     private Long familyUserId;
 
+    /** 与家属的关系（仅用于表单传参与绑定关系维护，不落库） */
+    @TableField(exist = false)
+    private String relation;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

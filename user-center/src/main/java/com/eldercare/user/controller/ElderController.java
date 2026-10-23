@@ -62,7 +62,7 @@ public class ElderController {
         return Result.success(elders);
     }
 
-    /** 新增老人（管理员/工作人员） */
+    /** 新增老人（管理员/工作人员），可选绑定家属账号 */
     @PostMapping("/add")
     @RequireRole({"ADMIN", "STAFF"})
     public Result<Long> add(@RequestBody Elder elder) {
@@ -71,15 +71,32 @@ public class ElderController {
         }
         elder.setId(null);
         elderMapper.insert(elder);
+        bindFamily(elder);
         return Result.success(elder.getId());
     }
 
-    /** 修改老人（管理员/工作人员） */
+    /** 修改老人（管理员/工作人员），同步更新家属绑定 */
     @PutMapping("/update")
     @RequireRole({"ADMIN", "STAFF"})
     public Result<Void> update(@RequestBody Elder elder) {
         elderMapper.updateById(elder);
+        // 重建绑定关系：先清理旧绑定，再按新家属绑定
+        familyBindingMapper.delete(new LambdaQueryWrapper<FamilyBinding>()
+                .eq(FamilyBinding::getElderId, elder.getId()));
+        bindFamily(elder);
         return Result.success();
+    }
+
+    /** 按 familyUserId 建立家属-老人绑定 */
+    private void bindFamily(Elder elder) {
+        if (elder.getFamilyUserId() == null) {
+            return;
+        }
+        FamilyBinding binding = new FamilyBinding();
+        binding.setFamilyUserId(elder.getFamilyUserId());
+        binding.setElderId(elder.getId());
+        binding.setRelation(StringUtils.hasText(elder.getRelation()) ? elder.getRelation() : "子女");
+        familyBindingMapper.insert(binding);
     }
 
     /** 删除老人（管理员/工作人员，逻辑删除并清理绑定关系） */
