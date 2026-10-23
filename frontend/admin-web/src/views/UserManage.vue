@@ -1,6 +1,7 @@
 <template>
   <el-card shadow="never">
     <div class="toolbar">
+      <el-button type="primary" @click="openAdd">新增用户</el-button>
       <el-input v-model="keyword" placeholder="搜索用户名/姓名" style="width: 240px" clearable @keyup.enter="load" @clear="load" />
       <el-button type="primary" @click="load">查询</el-button>
     </div>
@@ -42,13 +43,35 @@
       :current-page="current"
       @current-change="pageChange"
     />
+
+    <el-dialog v-model="dialogVisible" title="新增用户" width="460px">
+      <el-form :model="form" label-width="90px">
+        <el-form-item label="用户名"><el-input v-model="form.username" placeholder="必填" /></el-form-item>
+        <el-form-item label="密码"><el-input v-model="form.password" placeholder="必填" show-password /></el-form-item>
+        <el-form-item label="手机号"><el-input v-model="form.phone" /></el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="form.role" style="width: 100%">
+            <el-option label="管理员" value="ADMIN" />
+            <el-option label="工作人员" value="STAFF" />
+            <el-option label="服务商" value="PROVIDER" />
+            <el-option label="家属" value="FAMILY" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="姓名"><el-input v-model="form.realName" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">保存</el-button>
+      </template>
+    </el-dialog>
   </el-card>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUserList, updateUserStatus } from '../api/user'
+import { register } from '../api/auth'
 
 const list = ref([])
 const total = ref(0)
@@ -85,6 +108,25 @@ const toggleStatus = (row) => {
       load()
     })
     .catch(() => {})
+}
+
+const dialogVisible = ref(false)
+const form = reactive({ username: '', password: '', phone: '', role: 'FAMILY', realName: '' })
+
+const openAdd = () => {
+  Object.assign(form, { username: '', password: '', phone: '', role: 'FAMILY', realName: '' })
+  dialogVisible.value = true
+}
+
+const handleSave = async () => {
+  if (!form.username || !form.password) {
+    ElMessage.warning('请填写用户名和密码')
+    return
+  }
+  await register(form)
+  ElMessage.success('新增成功')
+  dialogVisible.value = false
+  load()
 }
 
 onMounted(load)
