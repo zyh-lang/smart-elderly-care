@@ -1,0 +1,46 @@
+<view class="page" wx:if="{{workOrder}}">
+  <view class="card">
+    <view class="status-banner status-{{workOrder.status}}">{{statusText[workOrder.status] || workOrder.status}}</view>
+    <view class="row"><text class="label">工单号</text><text class="value">{{workOrder.workOrderNo}}</text></view>
+    <view class="row"><text class="label">服务项目</text><text class="value">{{serviceOrder.serviceName}}</text></view>
+    <view class="row"><text class="label">服务金额</text><text class="value price">¥{{serviceOrder.amount}}</text></view>
+    <view class="row"><text class="label">服务商</text><text class="value">{{workOrder.providerName || '-'}}</text></view>
+    <view class="row"><text class="label">服务地址</text><text class="value">{{serviceOrder.address}}</text></view>
+    <view class="row"><text class="label">派单时间</text><text class="value">{{workOrder.dispatchTime}}</text></view>
+    <view class="row" wx:if="{{workOrder.acceptTime}}"><text class="label">开始时间</text><text class="value">{{workOrder.acceptTime}}</text></view>
+    <view class="row" wx:if="{{workOrder.finishTime}}"><text class="label">完成时间</text><text class="value">{{workOrder.finishTime}}</text></view>
+  </view>
+
+  <view class="actions">
+    <button wx:if="{{workOrder.status === 'WAIT_ACCEPT'}}" type="primary" bindtap="onAccept">验收</button>
+    <button wx:if="{{workOrder.status === 'COMPLETED'}}" type="primary" bindtap="toggleEvaluate">评价</button>
+    <button wx:if="{{canComplaint}}" type="warn" bindtap="toggleComplaint">投诉</button>
+    <button wx:if="{{canCancel}}" bindtap="onCancel">取消工单</button>
+  </view>
+
+  <view class="mask" wx:if="{{showEvaluate}}" bindtap="toggleEvaluate">
+    <view class="dialog" catchtap="noop">
+      <view class="dialog-title">评价服务</view>
+      <view class="rate-row">
+        <text>评分</text>
+        <slider min="1" max="5" step="1" show-value value="{{rating}}" bindchange="onRating" />
+      </view>
+      <textarea class="dialog-textarea" placeholder="说说服务体验（可选）" value="{{content}}" bindinput="onContent"></textarea>
+      <view class="dialog-btns">
+        <button size="mini" bindtap="toggleEvaluate">取消</button>
+        <button size="mini" type="primary" bindtap="submitEvaluate">提交评价</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="mask" wx:if="{{showComplaint}}" bindtap="toggleComplaint">
+    <view class="dialog" catchtap="noop">
+      <view class="dialog-title">投诉</view>
+      <textarea class="dialog-textarea" placeholder="请描述投诉原因" value="{{complaintReason}}" bindinput="onReason"></textarea>
+      <view class="dialog-btns">
+        <button size="mini" bindtap="toggleComplaint">取消</button>
+        <button size="mini" type="warn" bindtap="submitComplaint">提交投诉</button>
+      </view>
+    </view>
+  </view>
+</view>

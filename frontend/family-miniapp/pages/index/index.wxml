@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="banner">
+    <view class="banner-title">贴心服务，温暖到家</view>
+    <view class="banner-sub">为您的家人选择专业的上门服务</view>
+  </view>
+
+  <view class="service-card" wx:for="{{services}}" wx:key="id">
+    <view class="card-top">
+      <text class="name">{{item.serviceName}}</text>
+      <text class="type">{{item.serviceType}}</text>
+    </view>
+    <view class="desc">{{item.description}}</view>
+    <view class="card-bottom">
+      <text class="price">¥{{item.price}}</text>
+      <button class="order-btn" size="mini" type="primary" bindtap="openOrder" data-id="{{item.id}}" data-name="{{item.serviceName}}">立即下单</button>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!services.length}}">暂无服务</view>
+
+  <view class="mask" wx:if="{{showOrder}}" bindtap="closeOrder">
+    <view class="dialog" catchtap="noop">
+      <view class="dialog-title">下单：{{orderServiceName}}</view>
+      <picker range="{{elderNames}}" value="{{elderIndex}}" bindchange="onElderChange">
+        <view class="picker-box">
+          <text>服务对象</text>
+          <text class="picker-value">{{elderIndex >= 0 ? elderNames[elderIndex] : '请选择老人'}} ›</text>
+        </view>
+      </picker>
+      <input class="dialog-input" placeholder="服务地址（如：朝阳社区3栋201）" value="{{address}}" bindinput="onAddress" />
+      <view class="dialog-btns">
+        <button size="mini" bindtap="closeOrder">取消</button>
+        <button size="mini" type="primary" bindtap="submitOrder">确认下单</button>
+      </view>
+    </view>
+  </view>
+</view>

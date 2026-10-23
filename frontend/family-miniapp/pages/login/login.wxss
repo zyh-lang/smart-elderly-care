@@ -1,0 +1,50 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 60rpx 0;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #1677ff 0%, #36cfc9 100%);
+}
+
+.logo { font-size: 120rpx; }
+
+.title {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.subtitle {
+  margin-top: 8rpx;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.form {
+  margin-top: 80rpx;
+  width: 100%;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 48rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.input {
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #f5f7fa;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  margin-bottom: 28rpx;
+}
+
+.btn { margin-top: 12rpx; }
+
+.tip {
+  margin-top: 32rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+}

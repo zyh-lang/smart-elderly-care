@@ -1,0 +1,26 @@
+.msg-card { position: relative; }
+
+.msg-card.read { opacity: 0.65; }
+
+.msg-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.msg-title { font-weight: 600; font-size: 30rpx; }
+
+.msg-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #ff4d4f;
+}
+
+.msg-content {
+  color: #666;
+  margin: 12rpx 0;
+  font-size: 26rpx;
+}
+
+.msg-time { color: #bbb; font-size: 24rpx; }

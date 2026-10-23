@@ -1,0 +1,55 @@
+<view class="page">
+  <picker range="{{elderNames}}" value="{{elderIndex}}" bindchange="onElderChange">
+    <view class="card elder-picker">
+      <text>当前老人</text>
+      <text class="picker-value">{{elderIndex >= 0 ? elderNames[elderIndex] : '请选择'}} ›</text>
+    </view>
+  </picker>
+
+  <view class="card" wx:if="{{record}}">
+    <view class="section-title">基本档案</view>
+    <view class="grid">
+      <view class="grid-item"><text class="k">身高</text><text class="v">{{record.height || '-'}} cm</text></view>
+      <view class="grid-item"><text class="k">体重</text><text class="v">{{record.weight || '-'}} kg</text></view>
+      <view class="grid-item"><text class="k">血型</text><text class="v">{{record.bloodType || '-'}}</text></view>
+      <view class="grid-item"><text class="k">过敏史</text><text class="v">{{record.allergyHistory || '无'}}</text></view>
+    </view>
+    <view class="grid">
+      <view class="grid-item"><text class="k">既往病史</text><text class="v">{{record.medicalHistory || '无'}}</text></view>
+      <view class="grid-item"><text class="k">家族病史</text><text class="v">{{record.familyHistory || '无'}}</text></view>
+    </view>
+  </view>
+  <view class="card" wx:if="{{elderIndex >= 0 && !record}}">
+    <view class="section-title">基本档案</view>
+    <view class="no-record">暂未建档</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">健康指标</view>
+    <view class="add-row">
+      <picker class="type-picker" range="{{metricTypes}}" range-key="label" value="{{metricTypeIndex}}" bindchange="onMetricTypeChange">
+        <view>{{metricTypes[metricTypeIndex].label}} ›</view>
+      </picker>
+      <input class="value-input" placeholder="指标值，如 120/80" value="{{metricValue}}" bindinput="onMetricValue" />
+      <button size="mini" type="primary" bindtap="addMetric">录入</button>
+    </view>
+    <view class="metric-item" wx:for="{{metrics}}" wx:key="id">
+      <text class="metric-type">{{metricLabel(item.metricType)}}</text>
+      <text class="metric-value">{{item.metricValue}}</text>
+      <text class="metric-time">{{item.measureTime}}</text>
+    </view>
+    <view class="no-record" wx:if="{{!metrics.length}}">暂无指标记录</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">用药记录</view>
+    <view class="med-item" wx:for="{{medications}}" wx:key="id">
+      <view class="med-top">
+        <text class="med-name">{{item.drugName}}</text>
+        <text class="med-dosage">{{item.dosage}}</text>
+      </view>
+      <view class="med-sub">{{item.frequency}} · 提醒 {{item.remindTime}}</view>
+    </view>
+    <view class="no-record" wx:if="{{!medications.length}}">暂无用药记录</view>
+  </view>
+</view>

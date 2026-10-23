@@ -3,10 +3,13 @@ package com.eldercare.order.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eldercare.common.core.constant.AuthConstant;
+import com.eldercare.common.core.exception.BusinessException;
+import com.eldercare.common.core.exception.ErrorCode;
 import com.eldercare.common.core.result.PageResult;
 import com.eldercare.common.core.result.Result;
 import com.eldercare.common.web.annotation.RequireRole;
 import com.eldercare.common.web.context.UserContext;
+import com.eldercare.order.dto.WorkOrderDetailVO;
 import com.eldercare.order.entity.ServiceOrder;
 import com.eldercare.order.entity.WorkOrder;
 import com.eldercare.order.mapper.ServiceOrderMapper;
@@ -66,6 +69,19 @@ public class WorkOrderController {
     public Result<Void> cancel(@PathVariable Long id) {
         orderService.cancelWork(id);
         return Result.success();
+    }
+
+    /** 工单详情（工单 + 关联订单） */
+    @GetMapping("/detail/{id}")
+    public Result<WorkOrderDetailVO> detail(@PathVariable Long id) {
+        WorkOrder wo = workOrderMapper.selectById(id);
+        if (wo == null) {
+            throw new BusinessException(ErrorCode.WORK_ORDER_NOT_EXIST);
+        }
+        WorkOrderDetailVO vo = new WorkOrderDetailVO();
+        vo.setWorkOrder(wo);
+        vo.setServiceOrder(serviceOrderMapper.selectById(wo.getOrderId()));
+        return Result.success(vo);
     }
 
     /** 工单分页（管理员/工作人员） */

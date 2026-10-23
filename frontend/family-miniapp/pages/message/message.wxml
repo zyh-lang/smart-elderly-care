@@ -1,0 +1,11 @@
+<view class="page">
+  <view class="card msg-card {{item.readFlag === 1 ? 'read' : ''}}" wx:for="{{messages}}" wx:key="id" bindtap="onRead" data-id="{{item.id}}" data-index="{{index}}">
+    <view class="msg-top">
+      <text class="msg-title">{{item.title}}</text>
+      <view class="msg-dot" wx:if="{{item.readFlag === 0}}"></view>
+    </view>
+    <view class="msg-content">{{item.content}}</view>
+    <view class="msg-time">{{item.createTime}}</view>
+  </view>
+  <view class="empty" wx:if="{{!messages.length}}">暂无消息</view>
+</view>

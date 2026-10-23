@@ -1,0 +1,11 @@
+<view class="login-page">
+  <view class="logo">🏠</view>
+  <view class="title">社区智慧养老服务平台</view>
+  <view class="subtitle">家属端</view>
+  <view class="form">
+    <input class="input" placeholder="请输入用户名" value="{{username}}" bindinput="onUsername" />
+    <input class="input" placeholder="请输入密码" password value="{{password}}" bindinput="onPassword" />
+    <button class="btn" type="primary" loading="{{loading}}" bindtap="onLogin">登 录</button>
+  </view>
+  <view class="tip">测试账号：family01 / 123456</view>
+</view>
