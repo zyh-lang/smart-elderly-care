@@ -11,6 +11,9 @@ public final class OrderStatus {
     /** 已派单 */
     public static final String DISPATCHED = "DISPATCHED";
 
+    /** 已完成（验收后） */
+    public static final String COMPLETED = "COMPLETED";
+
     /** 已取消 */
     public static final String CANCELLED = "CANCELLED";
 

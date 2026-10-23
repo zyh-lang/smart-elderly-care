@@ -8,6 +8,7 @@ import com.eldercare.common.core.vo.StatTrendVO;
 import com.eldercare.order.entity.Evaluation;
 import com.eldercare.order.entity.ServiceOrder;
 import com.eldercare.order.entity.WorkOrder;
+import com.eldercare.order.enums.OrderStatus;
 import com.eldercare.order.enums.WorkOrderStatus;
 import com.eldercare.order.mapper.ComplaintMapper;
 import com.eldercare.order.mapper.EvaluationMapper;
@@ -57,7 +58,9 @@ public class StatController {
         vo.setWorkOrderCount(workOrderMapper.selectCount(null));
 
         List<ServiceOrder> orders = serviceOrderMapper.selectList(null);
+        // 总营收仅统计已完成订单
         BigDecimal totalAmount = orders.stream()
+                .filter(o -> OrderStatus.COMPLETED.equals(o.getStatus()))
                 .map(ServiceOrder::getAmount)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -97,7 +100,9 @@ public class StatController {
             StatTrendVO vo = new StatTrendVO();
             vo.setDate(d.toString());
             vo.setOrderCount((long) dayOrders.size());
-            vo.setAmount(dayOrders.stream().map(ServiceOrder::getAmount)
+            vo.setAmount(dayOrders.stream()
+                    .filter(o -> OrderStatus.COMPLETED.equals(o.getStatus()))
+                    .map(ServiceOrder::getAmount)
                     .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add));
             result.add(vo);
         }
@@ -115,7 +120,9 @@ public class StatController {
             StatServiceRankVO vo = new StatServiceRankVO();
             vo.setServiceType(e.getKey());
             vo.setOrderCount((long) e.getValue().size());
-            vo.setAmount(e.getValue().stream().map(ServiceOrder::getAmount)
+            vo.setAmount(e.getValue().stream()
+                    .filter(o -> OrderStatus.COMPLETED.equals(o.getStatus()))
+                    .map(ServiceOrder::getAmount)
                     .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add));
             return vo;
         }).sorted(Comparator.comparing(StatServiceRankVO::getOrderCount).reversed())

@@ -48,8 +48,8 @@ const current = ref(1)
 const size = ref(10)
 const loading = ref(false)
 
-const statusText = (s) => ({ PENDING_DISPATCH: '待派单', DISPATCHED: '已派单', CANCELLED: '已取消' }[s] || s)
-const statusTagType = (s) => ({ PENDING_DISPATCH: 'warning', DISPATCHED: 'success', CANCELLED: 'info' }[s] || 'info')
+const statusText = (s) => ({ PENDING_DISPATCH: '待派单', DISPATCHED: '已派单', COMPLETED: '已完成', CANCELLED: '已取消' }[s] || s)
+const statusTagType = (s) => ({ PENDING_DISPATCH: 'warning', DISPATCHED: 'success', COMPLETED: 'success', CANCELLED: 'info' }[s] || 'info')
 
 const load = async () => {
   loading.value = true

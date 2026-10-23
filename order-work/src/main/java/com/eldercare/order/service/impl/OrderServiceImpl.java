@@ -242,6 +242,11 @@ public class OrderServiceImpl implements OrderService {
         update.setId(workOrderId);
         update.setStatus(WorkOrderStatus.COMPLETED);
         workOrderMapper.updateById(update);
+        // 同步订单状态为已完成（总营收按已完成订单统计）
+        ServiceOrder orderUpdate = new ServiceOrder();
+        orderUpdate.setId(wo.getOrderId());
+        orderUpdate.setStatus(OrderStatus.COMPLETED);
+        serviceOrderMapper.updateById(orderUpdate);
         // 通知服务商工单已验收
         notifyService.send(wo.getProviderUserId(), "工单已验收", "您的工单已通过验收");
     }
